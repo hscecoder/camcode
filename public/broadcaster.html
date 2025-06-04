@@ -61,9 +61,24 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        const socket = io();
+        const socket = io({
+            transports: ['websocket'],
+            upgrade: false
+        });
         const video = document.getElementById('videoElement');
         const status = document.getElementById('status');
+
+        socket.on('connect', () => {
+            status.textContent = 'Connected to server';
+            startStreaming();
+        });
+
+        socket.on('connect_error', (error) => {
+            console.error('Connection error:', error);
+            status.textContent = 'Connection error';
+            status.style.backgroundColor = '#ffe6e6';
+            status.style.color = '#cc0000';
+        });
 
         async function startStreaming() {
             try {
@@ -93,8 +108,6 @@
                 status.style.color = '#cc0000';
             }
         }
-
-        startStreaming();
     </script>
 </body>
 </html> 

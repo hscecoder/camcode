@@ -53,13 +53,23 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        const socket = io();
+        const socket = io({
+            transports: ['websocket'],
+            upgrade: false
+        });
         const streamImage = document.getElementById('streamImage');
         const status = document.getElementById('status');
 
         socket.on('connect', () => {
             status.textContent = 'Connected, waiting for stream...';
             status.classList.add('connected');
+        });
+
+        socket.on('connect_error', (error) => {
+            console.error('Connection error:', error);
+            status.textContent = 'Connection error';
+            status.style.backgroundColor = '#ffe6e6';
+            status.style.color = '#cc0000';
         });
 
         socket.on('stream', (imageData) => {
