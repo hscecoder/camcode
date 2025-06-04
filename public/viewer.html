@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webcam Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #1a73e8;
+            margin-bottom: 20px;
+        }
+        #streamImage {
+            width: 100%;
+            max-width: 640px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            background-color: #f8f9fa;
+        }
+        .connected {
+            background-color: #e6ffe6;
+            color: #006600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Webcam Viewer</h1>
+        <img id="streamImage" alt="Waiting for stream...">
+        <div id="status" class="status">Waiting for connection...</div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const streamImage = document.getElementById('streamImage');
+        const status = document.getElementById('status');
+
+        socket.on('connect', () => {
+            status.textContent = 'Connected, waiting for stream...';
+            status.classList.add('connected');
+        });
+
+        socket.on('stream', (imageData) => {
+            streamImage.src = imageData;
+        });
+
+        socket.on('disconnect', () => {
+            status.textContent = 'Disconnected';
+            status.classList.remove('connected');
+        });
+    </script>
+</body>
+</html> 
